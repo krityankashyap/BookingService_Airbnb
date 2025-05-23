@@ -32,6 +32,7 @@ model IdempotencyKey {  // our agenda is final booking should be idempotent that
   updatedAt     DateTime        @updatedAt
   bookindId     Int             @unique
   booking       Booking?        @relation(fields: [bookindId] , references: [id]) // the bookingId property here is nothing but the id column of the Booking table
+  finalized     Boolean         @default(false)
 
 }
 
