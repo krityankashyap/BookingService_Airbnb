@@ -22,8 +22,7 @@ model Booking {
   bookingAmount    Int
   status           BookingStatus   @default(PENDING)
   tatalGuest       Int
-  idempotencyKeyId Int             @unique
-  idempotencyKey   IdempotencyKey? @relation(fields: [idempotencyKeyId], references: [id])  // the idempotencyKeyId property here is nothing but the id column of the idempotencyKey table
+  idempotencyKey   IdempotencyKey?  // the idempotencyKeyId property here is nothing but the id column of the idempotencyKey table
 }
 
 model IdempotencyKey {  // our agenda is final booking should be idempotent that means if u try multiple bookings it should work
@@ -31,7 +30,8 @@ model IdempotencyKey {  // our agenda is final booking should be idempotent that
   key           String             @unique  // uuid
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  booking       Booking?
+  bookindId     Int             @unique
+  booking       Booking?        @relation(fields: [bookindId] , references: [id]) // the bookingId property here is nothing but the id column of the Booking table
 
 }
 
