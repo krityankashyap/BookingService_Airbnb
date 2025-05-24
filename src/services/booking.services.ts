@@ -17,7 +17,7 @@ export async function createBookingService(createBookingDTO: CreateBookingDTO){
 
     return {
       idempotencyKey: idempotencyKey,
-      booking: booking.id
+      bookingId: booking.id
     };
 };
 
