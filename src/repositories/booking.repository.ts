@@ -43,7 +43,7 @@ export async function getBookingId(bookingId: number){
    return booking
 }
 
-export async function confirmBookingSatus(bookingId : number ){
+export async function confirmBooking(bookingId : number ){
    const booking = await prismaClient.booking.update({
       where : {
          id: bookingId,
@@ -56,7 +56,7 @@ export async function confirmBookingSatus(bookingId : number ){
    return booking
 
 }
-export async function cancellBookingSatus(bookingId : number ){
+export async function cancellBooking(bookingId : number ){
    const booking = await prismaClient.booking.update({
       where : {
          id: bookingId,
