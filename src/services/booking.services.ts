@@ -1,18 +1,14 @@
-import { confirmBooking, confirmBookingSatus, createBooking, createIdempotencyKey, getFinalizedIdempotencyKey, getIdempotencyKey } from "../repositories/booking.repository";
+import { CreateBookingDTO } from "../dto/booking.dto";
+import { confirmBooking, createBooking, createIdempotencyKey, getFinalizedIdempotencyKey, getIdempotencyKey } from "../repositories/booking.repository";
 import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
 import { generateIdempotencyKey } from "../utils/generateIdempotency";
 
-export async function createBookingService(
-  userId : number,
-  hotelId : number,
-  totalGuest : number,
-  bookingAmount: number
-){
+export async function createBookingService(createBookingDTO: CreateBookingDTO){
     const booking = await createBooking({
-      userId,
-      hotelId,
-      tatalGuest : totalGuest,
-      bookingAmount : bookingAmount
+      userId : createBookingDTO.userId,
+      hotelId : createBookingDTO.hotelId,
+      tatalGuest : createBookingDTO.totalGuest,
+      bookingAmount : createBookingDTO.bookingAmount
     });
 
     const idempotencyKey = generateIdempotencyKey();
@@ -37,9 +33,9 @@ export async function finalizeBookingService(idempotencyKey: string){
    }
 
    // now if idempotency key isn't finalized now this is the point to create finalizedBooking
-   const booking = await confirmBooking(idempotencyKeyData.bookindId);
+   const ConfirmBooking = await confirmBooking(idempotencyKeyData.bookindId);
    await getFinalizedIdempotencyKey(idempotencyKey);
 
-   return booking;
+   return ConfirmBooking;
 
 }
