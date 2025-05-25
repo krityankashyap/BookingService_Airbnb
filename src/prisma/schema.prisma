@@ -21,7 +21,7 @@ model Booking {
   updatedAt        DateTime        @updatedAt
   bookingAmount    Int
   status           BookingStatus   @default(PENDING)
-  tatalGuest       Int
+  totalGuest       Int
   idempotencyKey   IdempotencyKey?  // the idempotencyKeyId property here is nothing but the id column of the idempotencyKey table
 }
 

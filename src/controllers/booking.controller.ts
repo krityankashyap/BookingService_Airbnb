@@ -1,5 +1,5 @@
 import { Request , Response } from "express"
-import { createBookingService, finalizeBookingService } from "../services/booking.services"
+import { createBookingService , confirmBookingService} from "../services/booking.services"
 
 export const createBookingHandler = async (req: Request , res: Response) => {
         const booking = await createBookingService(req.body);
@@ -10,8 +10,8 @@ export const createBookingHandler = async (req: Request , res: Response) => {
          });
 };
 
-export const finalizedBookingHandler = async (req: Request , res: Response) => {
-     const booking = await finalizeBookingService(req.params.idempotencyKey);
+export const confirmBookingHandler = async (req: Request , res: Response) => {
+     const booking = await confirmBookingService(req.params.idempotencyKey);
 
      res.status(201).json({
       bookingId: booking.id,

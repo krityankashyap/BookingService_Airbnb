@@ -7,7 +7,7 @@ export async function createBookingService(createBookingDTO: CreateBookingDTO){
     const booking = await createBooking({
       userId : createBookingDTO.userId,
       hotelId : createBookingDTO.hotelId,
-      tatalGuest : createBookingDTO.totalGuest,
+      totalGuest : createBookingDTO.totalGuest,
       bookingAmount : createBookingDTO.bookingAmount
     });
 
@@ -21,7 +21,7 @@ export async function createBookingService(createBookingDTO: CreateBookingDTO){
     };
 };
 
-export async function finalizeBookingService(idempotencyKey: string){
+export async function confirmBookingService(idempotencyKey: string){
    const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
 
    if(!idempotencyKeyData){
