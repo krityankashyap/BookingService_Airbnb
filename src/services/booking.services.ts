@@ -3,6 +3,8 @@ import { confirmBooking, createBooking, createIdempotencyKey, getFinalizedIdempo
 import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
 import { generateIdempotencyKey } from "../utils/generateIdempotency";
 
+import  prismaClient  from "../prisma/client";
+
 export async function createBookingService(createBookingDTO: CreateBookingDTO){
     const booking = await createBooking({
       userId : createBookingDTO.userId,
@@ -22,10 +24,15 @@ export async function createBookingService(createBookingDTO: CreateBookingDTO){
 };
 
 export async function confirmBookingService(idempotencyKey: string){
-   const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
+
+  //Prisma gives couples of functions where we can wrap a single transaction
+
+   return await prismaClient.$transaction(async (tx)=>{ // this tx object going to uniquely identify the transaction
+
+    const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
 
    if(!idempotencyKeyData){
-    throw new NotFoundError("Idempotency key not found");  // no idempotency key found while query
+    throw new NotFoundError("Idempotency key not found");  // if no idempotency key found while query
    }
 
    if(idempotencyKeyData.finalized){
@@ -37,5 +44,8 @@ export async function confirmBookingService(idempotencyKey: string){
    await getFinalizedIdempotencyKey(idempotencyKey);
 
    return ConfirmBooking;
+
+   })
+   
 
 }
