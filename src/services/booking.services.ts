@@ -1,5 +1,5 @@
 import { CreateBookingDTO } from "../dto/booking.dto";
-import { confirmBooking, createBooking, createIdempotencyKey, getFinalizedIdempotencyKey, getIdempotencyKey } from "../repositories/booking.repository";
+import { confirmBooking, createBooking, createIdempotencyKey, getFinalizedIdempotencyKey,  getIdempotencyKeywithLock } from "../repositories/booking.repository";
 import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
 import { generateIdempotencyKey } from "../utils/generateIdempotency";
 
@@ -29,7 +29,7 @@ export async function confirmBookingService(idempotencyKey: string){
 
    return await prismaClient.$transaction(async (tx)=>{ // this tx object going to uniquely identify the transaction
 
-    const idempotencyKeyData = await getIdempotencyKey(idempotencyKey);
+    const idempotencyKeyData = await getIdempotencyKeywithLock(idempotencyKey , tx);
 
    if(!idempotencyKeyData){
     throw new NotFoundError("Idempotency key not found");  // if no idempotency key found while query

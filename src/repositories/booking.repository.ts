@@ -33,7 +33,7 @@ export async function getIdempotencyKeywithLock(key: string , tx: Prisma.Transac
       throw new BadRequestError('Invalid idempotency key format');
 
    }
-   const idempotencyKey: any = await tx.$queryRaw`SELECT * from "idempotencyKey" WHERE "key"=${key} FOR UPDATE`;
+   const idempotencyKey: Array<any> = await tx.$queryRaw`SELECT * from "idempotencyKey" WHERE "key"=${key} FOR UPDATE`;
 
    // SELECT * query is intended to give all records to we have to give a proper check
 
