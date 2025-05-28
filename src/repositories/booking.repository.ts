@@ -1,4 +1,4 @@
-import {  Prisma } from "@prisma/client";
+import {  Prisma , IdempotencyKey} from "@prisma/client";
 
 import {validate as isValidUUID} from "uuid"
 import  prismaClient from "../prisma/client";
@@ -15,7 +15,7 @@ export async function createBooking(bookinginput: Prisma.BookingCreateInput){
 export async function createIdempotencyKey(key: string , bookingId?: number){
    const idempotencyKey = await prismaClient.idempotencyKey.create({
       data : {
-         key,
+         idemkey: key,
          booking: {
           connect : {
             id: bookingId,
@@ -26,14 +26,16 @@ export async function createIdempotencyKey(key: string , bookingId?: number){
    return idempotencyKey;
 }
 
-export async function getIdempotencyKeywithLock(key: string , tx: Prisma.TransactionClient){
+export async function getIdempotencyKeywithLock( tx: Prisma.TransactionClient , key: string){
 
    if(!isValidUUID(key)){
   
       throw new BadRequestError('Invalid idempotency key format');
 
    }
-   const idempotencyKey: Array<any> = await tx.$queryRaw`SELECT * from "idempotencyKey" WHERE "key"=${key} FOR UPDATE`;
+   console.log(`SELECT * from IdempotencyKey WHERE idemkey='${key}' FOR UPDATE;`);
+
+   const idempotencyKey: Array<IdempotencyKey> = await tx.$queryRaw(Prisma.raw(`SELECT * from IdempotencyKey WHERE idemkey='${key}' FOR UPDATE;`));
 
    // SELECT * query is intended to give all records to we have to give a proper check
 
@@ -53,8 +55,8 @@ export async function getBookingId(bookingId: number){
    return booking
 }
 
-export async function confirmBooking(bookingId : number ){
-   const booking = await prismaClient.booking.update({
+export async function confirmBooking( tx: Prisma.TransactionClient , bookingId : number ){
+   const booking = await tx.booking.update({
       where : {
          id: bookingId,
       },
@@ -80,10 +82,10 @@ export async function cancellBooking(bookingId : number ){
 
 }
 
-export async function getFinalizedIdempotencyKey(key: string){
-   const idempotencyKey = await prismaClient.idempotencyKey.update({
+export async function FinalizedIdempotencyKey(tx: Prisma.TransactionClient , key: string){
+   const idempotencyKey = await tx.idempotencyKey.update({
       where:{
-         key
+          idemkey: key
       },
       data: {
          finalized: true

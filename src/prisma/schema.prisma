@@ -27,7 +27,7 @@ model Booking {
 
 model IdempotencyKey {  // our agenda is final booking should be idempotent that means if u try multiple bookings it should work
   id            Int             @id @default(autoincrement())
-  key           String             @unique  // uuid
+  idemkey       String          @unique  // uuid
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   bookindId     Int             @unique
